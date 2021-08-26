@@ -1,6 +1,10 @@
 # test-app-food-hub
 
-use `yarn install `to build
+## Installing & running the app
+```
+yarn install
+yarn start-server
+```
 
 Here are some sample CURL's
 ## POST
