@@ -9,16 +9,14 @@ yarn start-server
 Here are some sample CURL's
 ## POST
 ```
-curl --location --request POST 'http://localhost:8092/books' \
+curl --location --request POST 'http://localhost:8092/book' \
 --header 'Authorization: eyJ0b2tlbiI6InNvbWUtc2VjcmV0LXRva2VuIiwiaWQiOiJzb21lVW5pcXVlVXNlciJ9' \
 --header 'Content-Type: application/json' \
---data-raw '{
-    "bookName": "The art of saying NO"
-}'
+--data-raw '{"BookName":"Newtons laW","AuthorName":"Newton","Info":"General Info"}'
 ```
 
 ## GET
 ```
 curl --location --request GET 'http://localhost:8092/books' \
---header 'Authorization: eyJ0b2tlbiI6InNvbWUtc2VjcmV0LXRva2VuIiwiaWQiOiJzb21lVW5pcXVlVXNlciJ9'
+--data-raw ''
 ```

@@ -13,6 +13,11 @@
 const atob = require("atob"); //Since node don't have atob natively
 const secretToken = "some-secret-token" // For the sake of this task
 
+//Beware
+const notProtectedAPIs = [{
+    path: "/books",
+    method: "GET"
+}]
 
 const isValidToken = (dummyJwt) => {
     //TODO: Handle this for not so JSON cases
@@ -23,12 +28,14 @@ const isValidToken = (dummyJwt) => {
 
 const authenticator = (req, res, next) => {
     const { authorization } = req.headers;
-    if (!authorization) {
+    const { path, method } = req
+
+    if (notProtectedAPIs.find(eachApi => eachApi.method === method && eachApi.path === path)) {
+        console.log(`${path} is not a protected path`)
+    } else if (!authorization) {
         res.status(401)
         res.send("Authentication error")
-    }
-
-    if (!isValidToken(authorization)) {
+    } else if (!isValidToken(authorization)) {
         res.status(401)
         res.send("invalid token")
     }

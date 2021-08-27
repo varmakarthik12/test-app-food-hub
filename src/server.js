@@ -2,6 +2,7 @@
 const { json } = require("body-parser");
 const express = require("express")
 const { authenticator, getSelf } = require("./authenticator")
+const { bookMiddleware } = require("./reverser")
 const fs = require("fs")
 
 
@@ -10,38 +11,30 @@ const filePath = `${process.cwd()}/db.json`
 
 someApp.use(express.json());
 someApp.use(authenticator);
+someApp.use(bookMiddleware);
+
 
 someApp.get("/books", (req, res) => {
-
-    const currentRequestedUserId = getSelf(req);
-
     const fileData = fs.readFileSync(filePath, 'utf8')
     const parsedData = JSON.parse(fileData);
 
-    const correctedBookName = parsedData?.[currentRequestedUserId]?.split("")?.reverse()?.join("")
-
-    res.send({
-        bookName: correctedBookName
-    })
-
+    res.send(parsedData)
 })
 
-someApp.post("/books", async (req, res) => {
-    // Expects in format {"bookName": "some book"}
-    console.log("this is some post", req.body);
-
+someApp.post("/book", async (req, res) => {
     const currentRequestedUserId = getSelf(req)
-    const { bookName } = req.body ?? {}
-    const reverseName = bookName?.split("")?.reverse()?.join("")
+    const reqBody = req.body
 
-    const writeObj = {
-        [currentRequestedUserId]: reverseName
-    }
+    const fileData = fs.readFileSync(filePath, 'utf8')//Since this is for a file - I can't think about a best way to implement this other than below
+    const parsedData = fileData ? JSON.parse(fileData) : [];
 
-    fs.writeFileSync(filePath, JSON.stringify(writeObj))
+    parsedData.push(reqBody)
+    fs.writeFileSync(filePath, JSON.stringify(parsedData))
 
     res.send("Book added successfully")
 })
+
+
 
 someApp.listen("8092", () => {
     console.log("started");
